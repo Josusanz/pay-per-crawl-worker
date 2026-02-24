@@ -3,11 +3,18 @@ import { getCrawlerName } from './crawlers';
 import { parsePrice, formatPrice, isPriceAcceptable } from './pricing';
 import { log, setLogLevel } from './logger';
 
+const FREE_PATHS = ['/robots.txt', '/sitemap.xml', '/security.txt', '/.well-known/security.txt', '/crawlers.json'];
+
+let logLevelInitialized = false;
+
 export default {
   async fetch(request: Request, env: Env, _ctx: ExecutionContext): Promise<Response> {
-    if (env.LOG_LEVEL) setLogLevel(env.LOG_LEVEL as Parameters<typeof setLogLevel>[0]);
+    if (!logLevelInitialized && env.LOG_LEVEL) {
+      setLogLevel(env.LOG_LEVEL as Parameters<typeof setLogLevel>[0]);
+      logLevelInitialized = true;
+    }
+
     const url = new URL(request.url);
-    const FREE_PATHS = ['/robots.txt', '/sitemap.xml', '/security.txt', '/.well-known/security.txt', '/crawlers.json'];
     if (FREE_PATHS.includes(url.pathname)) return fetch(request);
 
     const userAgent = request.headers.get('User-Agent') || '';
@@ -35,7 +42,7 @@ export default {
     const exactPriceHeader = request.headers.get('crawler-exact-price');
     if (exactPriceHeader) {
       const exactPrice = parsePrice(exactPriceHeader);
-      if (exactPrice !== null && exactPrice === configuredPrice) {
+      if (exactPrice !== null && Math.abs(exactPrice - configuredPrice) < 0.00001) {
         const response = await fetch(request);
         return addChargedHeader(response, configuredPrice);
       }
