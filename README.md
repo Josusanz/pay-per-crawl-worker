@@ -152,6 +152,54 @@ Existen dos opciones para implementar Pay Per Crawl: este Worker (open source, d
 
 ---
 
+## ¿Está este Worker preparado para el cobro real?
+
+Sí, casi por completo. Cuando Cloudflare lance el sistema de pagos, el flujo será:
+
+```
+Tu Worker (HTTP 402)
+       ↕
+Cloudflare como intermediario financiero
+       ↕
+OpenAI / Anthropic / Google pagan a Cloudflare
+       ↕
+Cloudflare te transfiere el dinero a ti
+```
+
+Cloudflare actúa como el banco en el medio: negocia con las empresas de IA, gestiona los pagos y te paga a ti. No tienes que gestionar pagos directamente.
+
+### Qué tiene que pasar para que funcione
+
+Tres partes tienen que estar listas simultáneamente:
+
+| Parte | Estado actual |
+|---|---|
+| Este Worker | ✅ Listo — ya habla el protocolo correctamente |
+| Cloudflare Pay Per Crawl | 🔒 Beta privada — pendiente de apertura pública |
+| OpenAI/Anthropic/etc. pagando | ❌ Los crawlers aún no envían cabeceras de pago reales |
+
+### Por qué este Worker ya está listo
+
+El protocolo HTTP 402 ya está implementado correctamente:
+
+- Responde `402` con `crawler-price` cuando el crawler no paga
+- Acepta `crawler-max-price` (flujo proactivo) y `crawler-exact-price` (flujo reactivo)
+- Añade `crawler-charged` en la respuesta cuando se acepta el pago
+
+Lo que Cloudflare añadirá es su capa de verificación financiera: cuando un crawler envíe las cabeceras de pago, Cloudflare verificará que el pago es real antes de que llegue a tu Worker. La lógica del Worker no cambia.
+
+### Qué habrá que hacer cuando Cloudflare lo lance
+
+1. Activar Pay Per Crawl en el dashboard de Cloudflare (un click)
+2. Conectar tu cuenta de pagos
+3. El Worker ya funciona — no hay que tocar código
+
+### El único riesgo
+
+Que Cloudflare ajuste algún detalle del protocolo (nombres de cabeceras, formato del precio) antes del lanzamiento final. La especificación todavía no es definitiva. Si eso ocurre, el cambio en este repo será mínimo y localizado en `src/pricing.ts`.
+
+---
+
 ## Estructura del proyecto
 
 ```
