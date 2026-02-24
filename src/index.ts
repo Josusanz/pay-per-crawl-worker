@@ -1,10 +1,11 @@
 import { Env, CrawlerConfig, CrawlerRule } from './types';
 import { getCrawlerName } from './crawlers';
 import { parsePrice, formatPrice, isPriceAcceptable } from './pricing';
-import { log } from './logger';
+import { log, setLogLevel } from './logger';
 
 export default {
   async fetch(request: Request, env: Env, _ctx: ExecutionContext): Promise<Response> {
+    if (env.LOG_LEVEL) setLogLevel(env.LOG_LEVEL as Parameters<typeof setLogLevel>[0]);
     const url = new URL(request.url);
     const FREE_PATHS = ['/robots.txt', '/sitemap.xml', '/security.txt', '/.well-known/security.txt', '/crawlers.json'];
     if (FREE_PATHS.includes(url.pathname)) return fetch(request);

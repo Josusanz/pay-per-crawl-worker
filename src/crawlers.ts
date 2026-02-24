@@ -14,6 +14,7 @@ export const KNOWN_AI_CRAWLERS: KnownCrawler[] = [
   { name: 'YouBot', company: 'You.com', userAgentPatterns: ['YouBot'] },
   { name: 'cohere-ai', company: 'Cohere', userAgentPatterns: ['cohere-ai'] },
   { name: 'Bytespider', company: 'ByteDance', userAgentPatterns: ['Bytespider'] },
+  { name: 'AI2Bot', company: 'Allen Institute', userAgentPatterns: ['AI2Bot'] },
   { name: 'Diffbot', company: 'Diffbot', userAgentPatterns: ['Diffbot'] },
 ];
 
