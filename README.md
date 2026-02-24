@@ -1,46 +1,46 @@
 # 💰 Pay Per Crawl Worker
 
-> **Protege tu contenido de los crawlers de IA e implementa el protocolo HTTP 402.**
-> Cloudflare Worker listo para desplegar en 5 minutos.
+> **Protect your content from AI crawlers and implement the HTTP 402 protocol.**
+> Cloudflare Worker ready to deploy in 5 minutes.
 
 [![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Josusanz/pay-per-crawl-worker)
 
 ---
 
-## Por qué existe esto
+## Why this exists
 
-Desde hace años, OpenAI, Anthropic, Google y Meta mandan bots a leer todo el contenido de Internet para entrenar sus modelos de IA. **Gratis. Sin pedir permiso.**
+For years, OpenAI, Anthropic, Google and Meta have been sending bots to scrape the entire Internet to train their AI models. **For free. Without asking permission.**
 
-Cloudflare rescató el código HTTP 402 (`Payment Required`), que llevaba 30 años en el estándar sin usarse, para crear **Pay Per Crawl**: un protocolo para que los propietarios de contenido puedan cobrar a esos bots por cada visita.
+Cloudflare revived HTTP 402 (`Payment Required`) — a status code that had been sitting unused in the standard for 30 years — to create **Pay Per Crawl**: a protocol that lets content owners charge those bots for every visit.
 
-**Este repositorio importa por tres razones:**
+**This repository matters for three reasons:**
 
-**1. El protocolo necesita masa crítica.**
-Para que HTTP 402 funcione como ecosistema necesita que miles de sitios lo implementen. Cada deploy de este Worker es un voto a favor del protocolo.
+**1. The protocol needs critical mass.**
+For HTTP 402 to work as an ecosystem, thousands of sites need to implement it. Every deploy of this Worker is a vote in favor of the protocol.
 
-**2. Hoy bloqueas. Mañana cobras.**
-El cobro real aún no existe porque las empresas de IA no han implementado el lado del pago. Cuando lo hagan, los sitios que ya hablen el protocolo cobrarán desde el primer día. Los que no lo tengan implementado se quedarán fuera.
+**2. Today you block. Tomorrow you charge.**
+Real payments don't exist yet because AI companies haven't implemented the paying side. When they do, sites that already speak the protocol will start earning on day one. Those that don't will be left out.
 
-**3. Es una postura, no solo una herramienta.**
-Desplegar este Worker dice: *mi contenido tiene valor y no es gratis*. Aunque hoy no llegue dinero, establece un precedente técnico y legal. Es la diferencia entre ceder el contenido en silencio o dejar constancia de que no se cedió gratis.
+**3. It's a stance, not just a tool.**
+Deploying this Worker sends a message: *my content has value and it's not free*. Even if no money arrives today, it establishes a technical and legal precedent. It's the difference between silently giving away your content or putting on record that you didn't.
 
-> Una apuesta por un Internet donde los creadores de contenido tengan agencia sobre cómo se usa su trabajo.
-
----
-
-## ¿Cómo funciona?
-
-Cada vez que un crawler de IA llega a tu web:
-
-- Si no trae cabecera de pago → recibe un `402` con el precio
-- Si trae `crawler-max-price` y acepta el precio → pasa y se registra el cobro
-- Si está en tu lista de bloqueados → `403`
-- Si está permitido gratis → pasa sin restricciones
-- Si es un humano → pasa siempre gratis
+> A bet on an Internet where content creators have agency over how their work is used.
 
 ---
 
-## Instalación
+## How it works
+
+Every time an AI crawler hits your site:
+
+- No payment header → receives `402` with the price
+- Sends `crawler-max-price` and accepts the price → passes through, charge is recorded
+- On your blocklist → `403`
+- On your allowlist → passes through for free
+- Human visitor → always passes through for free
+
+---
+
+## Installation
 
 ```bash
 git clone https://github.com/Josusanz/pay-per-crawl-worker.git
@@ -50,16 +50,16 @@ cp .dev.vars.example .dev.vars
 npx wrangler dev
 ```
 
-## Probar en local
+## Test locally
 
 ```bash
-# Crawler sin pago → 402
+# Crawler without payment → 402
 curl -i -H "User-Agent: GPTBot/1.0" http://localhost:8787/
 
-# Crawler que acepta pagar → 200
+# Crawler willing to pay → 200
 curl -i -H "User-Agent: GPTBot/1.0" -H "crawler-max-price: USD 0.05" http://localhost:8787/
 
-# Usuario humano → 200 gratis
+# Human visitor → 200 free
 curl -i http://localhost:8787/
 ```
 
@@ -71,9 +71,9 @@ npx wrangler deploy
 
 ---
 
-## Configuración de crawlers
+## Crawler configuration
 
-Crea un archivo `crawler-rules.json` basándote en el ejemplo `crawler-rules.example.json`:
+Create a `crawler-rules.json` file based on the `crawler-rules.example.json` template:
 
 ```json
 {
@@ -88,24 +88,23 @@ Crea un archivo `crawler-rules.json` basándote en el ejemplo `crawler-rules.exa
 }
 ```
 
-Las acciones posibles son:
+Available actions:
 
-| Acción | Efecto |
+| Action | Effect |
 |--------|--------|
-| `charge` | Exige cabecera de pago. Sin ella, responde `402` con el precio |
-| `allow` | Deja pasar siempre, sin cobrar |
-| `block` | Bloquea siempre con `403` |
+| `charge` | Requires a payment header. Without it, responds `402` with the price |
+| `allow` | Always lets through, no charge |
+| `block` | Always blocks with `403` |
 
-### Aplicar las reglas
+### Applying the rules
 
-**En desarrollo** — pon el JSON como string en `.dev.vars`:
+**Development** — add the JSON as a string to `.dev.vars`:
 
 ```bash
-# Convierte el JSON a una línea y ponlo en .dev.vars
 echo "CRAWLER_RULES=$(cat crawler-rules.json | tr -d '\n')" >> .dev.vars
 ```
 
-**En producción** — usa un secret de Wrangler:
+**Production** — use a Wrangler secret:
 
 ```bash
 wrangler secret put CRAWLER_RULES <<< "$(cat crawler-rules.json | tr -d '\n')"
@@ -113,10 +112,10 @@ wrangler secret put CRAWLER_RULES <<< "$(cat crawler-rules.json | tr -d '\n')"
 
 ---
 
-## Crawlers soportados
+## Supported crawlers
 
-| Crawler | Empresa | Acción por defecto |
-|---------|---------|-------------------|
+| Crawler | Company | Default action |
+|---------|---------|----------------|
 | GPTBot | OpenAI | `charge` |
 | ChatGPT-User | OpenAI | `charge` |
 | OAI-SearchBot | OpenAI | `charge` |
@@ -133,106 +132,106 @@ wrangler secret put CRAWLER_RULES <<< "$(cat crawler-rules.json | tr -d '\n')"
 | AI2Bot | Allen Institute | `charge` |
 | Diffbot | Diffbot | `charge` |
 
-> Los crawlers de búsqueda tradicionales (Googlebot, Bingbot) no están en esta lista y siempre pasan gratis para no afectar el SEO.
+> Traditional search crawlers (Googlebot, Bingbot) are not on this list and always pass through for free so your SEO is not affected.
 
 ---
 
-## Diferencia con el Pay Per Crawl oficial de Cloudflare
+## Difference from Cloudflare's official Pay Per Crawl
 
-Existen dos opciones para implementar Pay Per Crawl: este Worker (open source, desplegable hoy) y el servicio oficial de Cloudflare (aún en beta privada). No son competidores — son complementarios.
+There are two ways to implement Pay Per Crawl: this Worker (open source, deployable today) and Cloudflare's official service (still in private beta). They are not competitors — they are complementary.
 
-| | Este Worker | Cloudflare Pay Per Crawl |
+| | This Worker | Cloudflare Pay Per Crawl |
 |---|---|---|
-| Disponibilidad | ✅ Ahora mismo | 🔒 Private beta |
-| Cobro real de dinero | ❌ Protocolo sin cobro | ✅ Cobro gestionado por Cloudflare |
-| Personalización | ✅ Total (tú controlas todo) | ⚠️ Limitada |
-| Coste | ✅ Gratis (Workers free tier) | ⏳ Por anunciar |
+| Availability | ✅ Right now | 🔒 Private beta |
+| Real money collection | ❌ Protocol only, no payments | ✅ Payments managed by Cloudflare |
+| Customization | ✅ Full control | ⚠️ Limited |
+| Cost | ✅ Free (Workers free tier) | ⏳ To be announced |
 
-**Recomendación:** usa este Worker ahora para protección inmediata + [apúntate al beta oficial](https://www.cloudflare.com/paypercrawl-signup/) para cuando esté disponible el cobro real.
+**Recommendation:** use this Worker now for immediate protection + [sign up for the official beta](https://www.cloudflare.com/paypercrawl-signup/) for when real payments are available.
 
 ---
 
-## ¿Está este Worker preparado para el cobro real?
+## Is this Worker ready for real payments?
 
-Sí, casi por completo. Cuando Cloudflare lance el sistema de pagos, el flujo será:
+Yes, almost entirely. When Cloudflare launches its payment system, the flow will be:
 
 ```
-Tu Worker (HTTP 402)
+Your Worker (HTTP 402)
        ↕
-Cloudflare como intermediario financiero
+Cloudflare as financial intermediary
        ↕
-OpenAI / Anthropic / Google pagan a Cloudflare
+OpenAI / Anthropic / Google pay Cloudflare
        ↕
-Cloudflare te transfiere el dinero a ti
+Cloudflare transfers the money to you
 ```
 
-Cloudflare actúa como el banco en el medio: negocia con las empresas de IA, gestiona los pagos y te paga a ti. No tienes que gestionar pagos directamente.
+Cloudflare acts as the bank in the middle: it negotiates with AI companies, handles the payments, and pays you. You don't manage payments directly.
 
-### Qué tiene que pasar para que funcione
+### What needs to happen for it to work
 
-Tres partes tienen que estar listas simultáneamente:
+Three pieces need to be ready at the same time:
 
-| Parte | Estado actual |
+| Piece | Current status |
 |---|---|
-| Este Worker | ✅ Listo — ya habla el protocolo correctamente |
-| Cloudflare Pay Per Crawl | 🔒 Beta privada — pendiente de apertura pública |
-| OpenAI/Anthropic/etc. pagando | ❌ Los crawlers aún no envían cabeceras de pago reales |
+| This Worker | ✅ Ready — already speaks the protocol correctly |
+| Cloudflare Pay Per Crawl | 🔒 Private beta — pending public launch |
+| OpenAI/Anthropic/etc. paying | ❌ Crawlers don't send real payment headers yet |
 
-### Por qué este Worker ya está listo
+### Why this Worker is already ready
 
-El protocolo HTTP 402 ya está implementado correctamente:
+The HTTP 402 protocol is fully implemented:
 
-- Responde `402` con `crawler-price` cuando el crawler no paga
-- Acepta `crawler-max-price` (flujo proactivo) y `crawler-exact-price` (flujo reactivo)
-- Añade `crawler-charged` en la respuesta cuando se acepta el pago
+- Responds `402` with `crawler-price` when the crawler doesn't pay
+- Accepts `crawler-max-price` (proactive flow) and `crawler-exact-price` (reactive flow)
+- Adds `crawler-charged` to the response when a payment is accepted
 
-Lo que Cloudflare añadirá es su capa de verificación financiera: cuando un crawler envíe las cabeceras de pago, Cloudflare verificará que el pago es real antes de que llegue a tu Worker. La lógica del Worker no cambia.
+What Cloudflare will add is a financial verification layer: when a crawler sends payment headers, Cloudflare will verify the payment is real before the request reaches your Worker. The Worker logic doesn't change.
 
-### Qué habrá que hacer cuando Cloudflare lo lance
+### What you'll need to do when Cloudflare launches
 
-1. Activar Pay Per Crawl en el dashboard de Cloudflare (un click)
-2. Conectar tu cuenta de pagos
-3. El Worker ya funciona — no hay que tocar código
+1. Enable Pay Per Crawl in the Cloudflare dashboard (one click)
+2. Connect your payment account
+3. The Worker already works — no code changes needed
 
-### El único riesgo
+### The only risk
 
-Que Cloudflare ajuste algún detalle del protocolo (nombres de cabeceras, formato del precio) antes del lanzamiento final. La especificación todavía no es definitiva. Si eso ocurre, el cambio en este repo será mínimo y localizado en `src/pricing.ts`.
+Cloudflare may adjust protocol details (header names, price format) before the final launch. The spec is not yet definitive. If that happens, the change in this repo will be minimal and contained in `src/pricing.ts`.
 
 ---
 
-## Estructura del proyecto
+## Project structure
 
 ```
 pay-per-crawl-worker/
 ├── src/
-│   ├── index.ts          # Lógica principal del Worker
-│   ├── crawlers.ts       # Lista de crawlers de IA conocidos
-│   ├── pricing.ts        # Parsing y validación de precios
-│   ├── logger.ts         # Sistema de logs estructurados
-│   └── types.ts          # Tipos TypeScript
-├── crawler-rules.example.json  # Ejemplo de reglas de configuración
-├── .dev.vars.example     # Variables de entorno para desarrollo local
-├── wrangler.toml         # Configuración de Cloudflare Workers
+│   ├── index.ts          # Main Worker logic
+│   ├── crawlers.ts       # Known AI crawlers database
+│   ├── pricing.ts        # Price parsing and validation
+│   ├── logger.ts         # Structured logging system
+│   └── types.ts          # TypeScript types
+├── crawler-rules.example.json  # Example crawler rules config
+├── .dev.vars.example     # Local development environment variables
+├── wrangler.toml         # Cloudflare Workers configuration
 ├── package.json
 └── tsconfig.json
 ```
 
 ---
 
-## Recursos
+## Resources
 
 - [Cloudflare Pay Per Crawl docs](https://developers.cloudflare.com/ai-crawl-control/features/pay-per-crawl/)
-- [Blog post de Cloudflare](https://blog.cloudflare.com/introducing-pay-per-crawl/)
-- [Solicitar acceso al beta](https://www.cloudflare.com/paypercrawl-signup/)
+- [Cloudflare blog post](https://blog.cloudflare.com/introducing-pay-per-crawl/)
+- [Sign up for the beta](https://www.cloudflare.com/paypercrawl-signup/)
 
 ---
 
-## Contribuir
+## Contributing
 
-PRs bienvenidos. Si encuentras un nuevo crawler de IA que no está en la lista, abre un issue o PR editando `src/crawlers.ts`.
+PRs welcome. If you find a new AI crawler not on the list, open an issue or PR editing `src/crawlers.ts`.
 
 ---
 
-## Licencia
+## License
 
 MIT — creado con ❤️ desde el Valle Sagrado del Cusco, Perú. por [Josu Sanz](https://github.com/Josusanz/pay-per-crawl-worker)
