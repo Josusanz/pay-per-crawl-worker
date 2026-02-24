@@ -97,4 +97,4 @@ Edita `CRAWLER_RULES` en `wrangler.toml`:
 
 ## Licencia
 
-MIT — creado con ❤️ desde el Valle Sagrado del Cusco, Perú.
+MIT — creado con ❤️ desde el Valle Sagrado del Cusco, Perú. por [Josu Sanz](https://github.com/Josusanz/pay-per-crawl-worker)
