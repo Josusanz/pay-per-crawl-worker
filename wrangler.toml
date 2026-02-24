@@ -13,3 +13,8 @@ vars = { DEFAULT_PRICE = "0.001", LOG_LEVEL = "debug" }
 
 [env.production]
 vars = { LOG_LEVEL = "warn" }
+
+[env.demo]
+name = "pay-per-crawl-demo"
+main = "src/demo.ts"
+compatibility_date = "2024-01-01"
