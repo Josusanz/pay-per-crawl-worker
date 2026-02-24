@@ -80,14 +80,26 @@ Edita `CRAWLER_RULES` en `wrangler.toml`:
 
 ## Diferencia con el Pay Per Crawl oficial de Cloudflare
 
+Existen dos opciones para implementar Pay Per Crawl: este Worker (open source, desplegable hoy) y el servicio oficial de Cloudflare (aún en beta privada). No son competidores — son complementarios.
+
 | | Este Worker | Cloudflare Pay Per Crawl |
 |---|---|---|
-| Disponibilidad | ✅ Ahora | 🔒 Private beta |
-| Cobro real de dinero | ❌ | ✅ |
-| Personalización | ✅ Total | ⚠️ Limitada |
-| Coste | ✅ Gratis | Pendiente |
+| Disponibilidad | ✅ Ahora mismo | 🔒 Private beta |
+| Cobro real de dinero | ❌ Protocolo sin cobro | ✅ Cobro gestionado por Cloudflare |
+| Personalización | ✅ Total (tú controlas todo) | ⚠️ Limitada |
+| Coste | ✅ Gratis (Workers free tier) | ⏳ Por anunciar |
 
-Úsalos juntos: este Worker para protección inmediata + [apuntarse al beta oficial](https://www.cloudflare.com/paypercrawl-signup/) para cobro real.
+**Lo que significa cada fila:**
+
+- **Disponibilidad** — Este Worker lo puedes desplegar en 5 minutos. El servicio oficial de Cloudflare está en lista de espera; puedes apuntarte pero todavía no está disponible para todos.
+
+- **Cobro real de dinero** — Este Worker implementa el protocolo HTTP 402 correctamente: responde con el precio y registra qué bots aceptan pagarlo. Pero no gestiona ningún pago real. El servicio oficial de Cloudflare sí conecta con una pasarela de pago y transfiere el dinero a tu cuenta.
+
+- **Personalización** — Con este Worker tienes control total: qué bots cobrar, qué precio poner a cada uno, cuáles bloquear, cuáles permitir gratis. El servicio oficial de Cloudflare aplica sus propias reglas con menos margen de configuración.
+
+- **Coste** — Este Worker corre en el plan gratuito de Cloudflare Workers (hasta 100.000 peticiones/día gratis). El precio del servicio oficial todavía no se ha anunciado.
+
+**Recomendación:** usa este Worker ahora para protección inmediata + [apúntate al beta oficial](https://www.cloudflare.com/paypercrawl-signup/) para cuando esté disponible el cobro real.
 
 ## Recursos
 
