@@ -5,6 +5,25 @@
 
 [![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Josusanz/pay-per-crawl-worker)
 
+## Por qué importa este repositorio
+
+Las empresas de IA han construido sus modelos raspando Internet entero sin compensar a quienes crearon ese contenido. No es un problema técnico — es un problema de poder. Quienes tienen los bots hacen las reglas.
+
+**Este repositorio es importante por tres razones:**
+
+**1. El protocolo existe, pero necesita masa crítica.**
+HTTP 402 lleva 30 años en el estándar sin usarse. Cloudflare lo ha rescatado, pero para que funcione como ecosistema necesita que miles de sitios lo implementen. Cada deploy de este Worker es un voto a favor del protocolo.
+
+**2. Hoy bloqueas. Mañana cobras.**
+El cobro real aún no existe porque las empresas de IA no han implementado el lado del pago. Pero eso está cambiando. Cuando Cloudflare abra su sistema de pagos y OpenAI o Anthropic empiecen a pagar, los sitios que ya hablen el protocolo cobrarán desde el primer día. Los que no lo tengan implementado se quedarán fuera.
+
+**3. Es una postura, no solo una herramienta.**
+Desplegar este Worker dice algo: *mi contenido tiene valor y no es gratis*. Aunque hoy no llegue dinero, establece un precedente técnico y legal. Es la diferencia entre ceder el contenido en silencio o dejar constancia de que no se cedió gratis.
+
+> Este repositorio es una apuesta por un Internet donde los creadores de contenido tengan agencia sobre cómo se usa su trabajo.
+
+---
+
 ## ¿Qué es esto?
 
 Desde hace años, OpenAI, Anthropic, Google y Meta mandan bots a leer todo el contenido de Internet para entrenar sus modelos de IA. **Gratis. Sin pedir permiso.**
