@@ -1,0 +1,18 @@
+{
+  "name": "pay-per-crawl-worker",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker para implementar el protocolo HTTP 402 Pay Per Crawl",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:prod": "wrangler deploy --env production",
+    "typecheck": "tsc --noEmit"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240208.0",
+    "typescript": "^5.4.2",
+    "wrangler": "^3.35.0"
+  }
+}
