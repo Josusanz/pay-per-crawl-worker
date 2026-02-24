@@ -3,7 +3,7 @@
 > **Protect your content from AI crawlers and implement the HTTP 402 protocol.**
 > Cloudflare Worker ready to deploy in 5 minutes.
 
-**[→ Live Demo](https://pay-per-crawl-demo.license-proxy.workers.dev)** · [![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Josusanz/pay-per-crawl-worker)
+**[→ Live Demo](https://aprende.software/demo)** · [![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Josusanz/pay-per-crawl-worker)
 
 ---
 
