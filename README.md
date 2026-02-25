@@ -218,6 +218,12 @@ pay-per-crawl-worker/
 
 ---
 
+## See also
+
+**[crawlerreceipt.com](https://crawlerreceipt.com)** — find out how much AI crawlers owe your site in unpaid scraping fees. Generates a shareable receipt using real Common Crawl index data.
+
+---
+
 ## Resources
 
 - [Cloudflare Pay Per Crawl docs](https://developers.cloudflare.com/ai-crawl-control/features/pay-per-crawl/)
